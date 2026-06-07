@@ -1,0 +1,89 @@
+package com.gradetracker.ui;
+
+import com.gradetracker.controller.GradeController;
+import java.util.Scanner;
+
+public class ConsoleUI {
+
+    private GradeController controller;
+    private Scanner scanner;
+
+    public ConsoleUI(GradeController controller) {
+        this.controller = controller;
+        this.scanner = new Scanner(System.in);
+    }
+
+    public void start() {
+        System.out.println("╔══════════════════════════════╗");
+        System.out.println("║   Student Grade Tracker      ║");
+        System.out.println("╚══════════════════════════════╝");
+
+        boolean running = true;
+        while (running) {
+            printMenu();
+            int choice = readInt("Enter choice: ");
+
+            switch (choice) {
+                case 1 -> {
+                    System.out.print("Enter student name: ");
+                    String name = scanner.nextLine();
+                    System.out.println(controller.addStudent(name));
+                }
+                case 2 -> {
+                    int id    = readInt("Enter student ID: ");
+                    double g  = readDouble("Enter grade (0-100): ");
+                    System.out.println(controller.addGrade(id, g));
+                }
+                case 3 -> {
+                    System.out.println("\n--- All Students ---");
+                    controller.printAllStudents();
+                }
+                case 4 -> controller.printSummaryReport();
+                case 5 -> {
+                    int id = readInt("Enter student ID to delete: ");
+                    System.out.println(controller.deleteStudent(id));
+                }
+                case 0 -> {
+                    System.out.println("Goodbye!");
+                    running = false;
+                }
+                default -> System.out.println("Invalid choice. Try again.");
+            }
+        }
+        scanner.close();
+    }
+
+    private void printMenu() {
+        System.out.println("\n--- Menu ---");
+        System.out.println("1. Add Student");
+        System.out.println("2. Add Grade to Student");
+        System.out.println("3. List All Students");
+        System.out.println("4. Summary Report");
+        System.out.println("5. Delete Student");
+        System.out.println("0. Exit");
+    }
+
+    private int readInt(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                int val = Integer.parseInt(scanner.nextLine().trim());
+                return val;
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        }
+    }
+
+    private double readDouble(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                double val = Double.parseDouble(scanner.nextLine().trim());
+                return val;
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid decimal number.");
+            }
+        }
+    }
+}

@@ -1,0 +1,24 @@
+package com.gradetracker;
+
+import com.gradetracker.controller.GradeController;
+import com.gradetracker.repository.StudentRepository;
+import com.gradetracker.service.GradeService;
+import com.gradetracker.ui.ConsoleUI;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class StudentGradeTrackerApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(StudentGradeTrackerApplication.class, args);
+
+        // Wire up layers manually
+        StudentRepository repository = new StudentRepository();
+        GradeService service         = new GradeService(repository);
+        GradeController controller   = new GradeController(service);
+        ConsoleUI ui                 = new ConsoleUI(controller);
+
+        ui.start();
+    }
+}

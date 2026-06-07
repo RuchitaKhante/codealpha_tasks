@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Student Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet"/>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { background: #0f172a; min-height: 100vh; padding: 40px 0; }
+        .card-dark {
+            background: #1e293b; border: 1px solid #334155;
+            border-radius: 14px; padding: 28px;
+        }
+        .avatar-lg {
+            width: 64px; height: 64px; border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; font-weight: 700; color: #fff;
+        }
+        .stat-box {
+            background: #0f172a; border: 1px solid #334155;
+            border-radius: 12px; padding: 20px; text-align: center;
+        }
+        .stat-num { font-size: 2rem; font-weight: 700; }
+        .stat-lbl { font-size: 0.78rem; color: #64748b; margin-top: 4px; }
+        .btn-back {
+            background: #1e293b; color: #94a3b8; border: 1px solid #334155;
+            border-radius: 8px; padding: 8px 16px; font-size: 0.875rem;
+            text-decoration: none; transition: all 0.15s;
+        }
+        .btn-back:hover { background: #334155; color: #f1f5f9; }
+        h5 { color: #f1f5f9; font-weight: 700; }
+        .grade-label { color: #64748b; font-size: 0.8rem; min-width: 60px; }
+        .progress { background: #0f172a; border-radius: 20px; height: 22px; }
+        .grade-value { color: #94a3b8; font-size: 0.8rem; min-width: 36px; text-align: right; }
+        .section-title {
+            font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;
+            color: #64748b; font-weight: 600; margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="container" style="max-width: 720px;">
+
+    <a href="/" class="btn-back mb-4 d-inline-flex align-items-center gap-2">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </a>
+
+    <div th:if="${student == null}" class="card-dark text-center" style="color:#f87171">
+        <i class="bi bi-exclamation-circle" style="font-size:2rem"></i>
+        <p class="mt-2 mb-0">Student not found.</p>
+    </div>
+
+    <div th:if="${student != null}">
+
+        <!-- Profile Card -->
+        <div class="card-dark mb-4 d-flex align-items-center gap-4">
+            <div class="avatar-lg" th:text="${#strings.substring(student.name,0,1)}">A</div>
+            <div>
+                <h5 class="mb-1" th:text="${student.name}">Student Name</h5>
+                <span style="color:#64748b; font-size:0.85rem;">
+                    Student ID: <span th:text="${student.id}" style="color:#818cf8"></span>
+                </span><br/>
+                <span style="color:#64748b; font-size:0.85rem;">
+                    Total Grades Recorded:
+                    <span th:text="${student.grades.size()}" style="color:#4ade80"></span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="row g-3 mb-4">
+            <div class="col-4">
+                <div class="stat-box">
+                    <div class="stat-num" style="color:#818cf8"
+                         th:text="${#numbers.formatDecimal(student.average,1,1)}">0.0</div>
+                    <div class="stat-lbl">Average Score</div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="stat-box">
+                    <div class="stat-num" style="color:#4ade80"
+                         th:text="${#numbers.formatDecimal(student.highest,1,1)}">0.0</div>
+                    <div class="stat-lbl">Highest Score</div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="stat-box">
+                    <div class="stat-num" style="color:#f87171"
+                         th:text="${#numbers.formatDecimal(student.lowest,1,1)}">0.0</div>
+                    <div class="stat-lbl">Lowest Score</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grade Bars -->
+        <div class="card-dark">
+            <div class="section-title">Grade Breakdown</div>
+
+            <div th:if="${student.grades.isEmpty()}" style="color:#475569; text-align:center; padding:24px 0;">
+                <i class="bi bi-inbox" style="font-size:2rem; display:block; margin-bottom:8px;"></i>
+                No grades recorded yet.
+            </div>
+
+            <div th:each="g, i : ${student.grades}" class="d-flex align-items-center gap-3 mb-3">
+                <span class="grade-label">Test <span th:text="${i.index + 1}"></span></span>
+                <div class="progress flex-grow-1">
+                    <div class="progress-bar"
+                         th:classappend="${g >= 75} ? 'bg-success' : (${g >= 50} ? 'bg-warning' : 'bg-danger')"
+                         role="progressbar"
+                         th:style="'width:' + ${g} + '%'"
+                         style="border-radius:20px; font-size:0.75rem; font-weight:600;">
+                        <span th:text="${g}"></span>
+                    </div>
+                </div>
+                <span class="grade-value" th:text="${g}"></span>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

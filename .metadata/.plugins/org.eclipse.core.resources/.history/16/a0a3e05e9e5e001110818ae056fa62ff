@@ -1,0 +1,5 @@
+package com.gradetracker.model;
+
+public class Student {
+
+}

@@ -1,0 +1,71 @@
+package com.gradetracker.controller;
+
+import com.gradetracker.model.Student;
+import com.gradetracker.service.GradeService;
+import java.util.List;
+
+public class GradeController {
+
+    private GradeService service;
+
+    public GradeController(GradeService service) {
+        this.service = service;
+    }
+
+    public String addStudent(String name) {
+        if (name == null || name.trim().isEmpty())
+            return "Error: Name cannot be empty.";
+        Student s = service.addStudent(name.trim());
+        return "Student added → ID: " + s.getId() + ", Name: " + s.getName();
+    }
+
+    public String addGrade(int id, double grade) {
+        if (grade < 0 || grade > 100)
+            return "Error: Grade must be between 0 and 100.";
+        boolean ok = service.addGradeToStudent(id, grade);
+        return ok ? "Grade " + grade + " added to student ID " + id
+                  : "Error: Student ID " + id + " not found.";
+    }
+
+    public String deleteStudent(int id) {
+        boolean ok = service.deleteStudent(id);
+        return ok ? "Student ID " + id + " deleted."
+                  : "Error: Student ID " + id + " not found.";
+    }
+
+    public void printAllStudents() {
+        List<Student> all = service.getAllStudents();
+        if (all.isEmpty()) {
+            System.out.println("  No students found.");
+            return;
+        }
+        for (Student s : all) {
+            System.out.printf("  [%d] %-20s | Avg: %5.1f | High: %5.1f | Low: %5.1f | Grades: %s%n",
+                s.getId(), s.getName(),
+                s.getAverage(), s.getHighest(), s.getLowest(),
+                s.getGrades());
+        }
+    }
+
+    public void printSummaryReport() {
+        List<Student> all = service.getAllStudents();
+        System.out.println("\n========== SUMMARY REPORT ==========");
+        if (all.isEmpty()) {
+            System.out.println("  No data available.");
+            return;
+        }
+        System.out.printf("  Total Students   : %d%n", all.size());
+        System.out.printf("  Class Average    : %.1f%n", service.getClassAverage());
+
+        Student top = service.getTopStudent();
+        Student bot = service.getBottomStudent();
+        if (top != null)
+            System.out.printf("  Top Student      : %s (avg %.1f)%n", top.getName(), top.getAverage());
+        if (bot != null)
+            System.out.printf("  Needs Improvement: %s (avg %.1f)%n", bot.getName(), bot.getAverage());
+
+        System.out.println("\n  --- Individual Report ---");
+        printAllStudents();
+        System.out.println("=====================================");
+    }
+}
