@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Payment Successful - LuxeStay</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #0a0a0f;
+    --card: #12121a;
+    --border: #1e1e2e;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --text: #e8e8f0;
+    --muted: #6b6b8a;
+    --green: #4caf50;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* NAV */
+nav {
+    background: rgba(10,10,15,0.95);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 3rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.logo {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold);
+    font-size: 1.5rem;
+}
+
+/* CONTAINER */
+.container {
+    max-width: 700px;
+    margin: 5rem auto;
+    padding: 0 2rem;
+}
+
+/* CARD */
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* SUCCESS ICON */
+.icon {
+    font-size: 3rem;
+    color: var(--green);
+    margin-bottom: 1rem;
+}
+
+/* TITLE */
+h1 {
+    font-family: 'Playfair Display', serif;
+    color: var(--green);
+    margin-bottom: 1rem;
+}
+
+/* SUB TEXT */
+p {
+    color: var(--muted);
+    margin: 0.5rem 0;
+}
+
+/* INFO BOX */
+.info {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin-top: 2rem;
+    text-align: left;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+    font-size: 0.9rem;
+}
+
+.key {
+    color: var(--muted);
+}
+
+/* BUTTON */
+.btn {
+    display: inline-block;
+    margin-top: 2rem;
+    padding: 0.9rem 2rem;
+    background: var(--gold);
+    color: #0a0a0f;
+    text-decoration: none;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: 0.2s;
+}
+
+.card {
+    position: relative;
+    z-index: 2;
+}
+
+.card::before {
+    pointer-events: none;
+}
+
+.btn:hover {
+    background: var(--gold-light);
+}
+
+
+.btn-bookings {
+    display: inline-block;
+    margin-top: 2rem;
+    padding: 0.9rem 2rem;
+    background: #c9a84c;
+    color: #0a0a0f;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    position: relative;
+    z-index: 3;
+}
+
+.btn-bookings:hover {
+    background: #e8c97a;
+}
+
+
+.btn-bookings:hover {
+    background: #e8c97a;
+}
+
+/* DECOR */
+.card::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(201,168,76,0.08), transparent 60%);
+    animation: glow 6s linear infinite;
+}
+
+@keyframes glow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+</style>
+</head>
+
+<body>
+
+<nav>
+    <div class="logo">✦ LuxeStay</div>
+</nav>
+
+<div class="container">
+
+<div class="card">
+
+    <div class="icon">✔</div>
+
+    <h1>Payment Successful</h1>
+
+    <p>Your booking has been confirmed successfully</p>
+    <p>We look forward to hosting your luxurious stay ✨</p>
+
+    <!-- BOOKING INFO -->
+    <div class="info">
+
+        <div class="info-row">
+            <span class="key">Booking ID</span>
+            <span th:text="${booking.id}"></span>
+        </div>
+
+        <div class="info-row">
+            <span class="key">Guest Name</span>
+            <span th:text="${booking.guestName}"></span>
+        </div>
+
+        <div class="info-row">
+            <span class="key">Room</span>
+            <span th:text="${booking.room.roomType + ' - ' + booking.room.roomNumber}"></span>
+        </div>
+
+        <div class="info-row">
+            <span class="key">Amount Paid</span>
+            <span>₹<span th:text="${payment.amount}"></span></span>
+        </div>
+
+    </div>
+
+ <a href="/mybookings" class="btn-bookings">
+    My Bookings
+</a> 
+
+</div>
+
+</div>
+
+</body>
+</html>

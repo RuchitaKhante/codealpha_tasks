@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment - LuxeStay</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0a0a0f; --card: #12121a; --border: #1e1e2e;
+            --gold: #c9a84c; --gold-light: #e8c97a; --text: #e8e8f0; --muted: #6b6b8a;
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        nav {
+            background: rgba(10,10,15,0.95); border-bottom: 1px solid var(--border);
+            padding: 1rem 3rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--gold); }
+        nav a { color: var(--muted); text-decoration: none; margin-left: 2rem; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; }
+
+        .container { max-width: 700px; margin: 4rem auto; padding: 0 2rem; }
+
+        .payment-card { background: var(--card); border: 1px solid var(--border); padding: 3rem; }
+        .payment-title { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 0.4rem; }
+        .payment-sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 2.5rem; }
+
+        /* Booking Summary */
+        .summary-box {
+            background: var(--bg); border: 1px solid var(--border);
+            padding: 1.5rem; margin-bottom: 2rem;
+        }
+        .summary-tag { font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.9rem; }
+        .summary-row .key { color: var(--muted); }
+        .summary-row .val { font-weight: 500; }
+        .divider { border: none; border-top: 1px solid var(--border); margin: 1rem 0; }
+        .total-row { display: flex; justify-content: space-between; align-items: center; }
+        .total-row .key { color: var(--muted); font-size: 0.9rem; }
+        .total-row .val { color: var(--gold); font-size: 1.4rem; font-weight: 600; }
+
+        /* Payment Methods */
+        .method-title { font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; }
+        .method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 2rem; }
+        .method-option { position: relative; }
+        .method-option input[type="radio"] { display: none; }
+        .method-label {
+            display: block; border: 1px solid var(--border); padding: 1rem;
+            text-align: center; cursor: pointer; transition: all 0.2s;
+            font-size: 0.85rem; color: var(--muted);
+        }
+        .method-icon { font-size: 1.5rem; display: block; margin-bottom: 0.4rem; }
+        .method-option input:checked + .method-label {
+            border-color: var(--gold); color: var(--text); background: rgba(201,168,76,0.08);
+        }
+
+        .btn-pay {
+            width: 100%; background: var(--gold); color: #0a0a0f;
+            border: none; padding: 1.1rem;
+            font-size: 0.9rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .btn-pay:hover { background: var(--gold-light); }
+
+        .secure-note { text-align: center; color: var(--muted); font-size: 0.75rem; margin-top: 1rem; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">✦ LuxeStay</div>
+    <div><a href="/rooms">← Back to Rooms</a></div>
+</nav>
+
+<div class="container">
+    <div class="payment-card">
+        <h2 class="payment-title">Complete Payment</h2>
+        <p class="payment-sub">Simulated payment — no real transaction occurs</p>
+
+        <!-- Booking Summary -->
+        <div class="summary-box">
+            <p class="summary-tag">✦ Booking Summary</p>
+            <div class="summary-row">
+                <span class="key">Guest Name</span>
+                <span class="val" th:text="${booking.guestName}"></span>
+            </div>
+            <div class="summary-row">
+                <span class="key">Room</span>
+                <span class="val" th:text="${booking.room.roomType + ' — Room ' + booking.room.roomNumber}"></span>
+            </div>
+            <div class="summary-row">
+                <span class="key">Check-In</span>
+                <span class="val" th:text="${booking.checkInDate}"></span>
+            </div>
+            <div class="summary-row">
+                <span class="key">Check-Out</span>
+                <span class="val" th:text="${booking.checkOutDate}"></span>
+            </div>
+            <div class="summary-row">
+                <span class="key">Nights</span>
+                <span class="val" th:text="${booking.numNights}"></span>
+            </div>
+            <div class="summary-row">
+                <span class="key">Guests</span>
+                <span class="val" th:text="${booking.numGuests}"></span>
+            </div>
+            <hr class="divider">
+            <div class="total-row">
+                <span class="key">Total Amount</span>
+                <span class="val">₹<span th:text="${booking.totalAmount}"></span></span>
+            </div>
+        </div>
+
+        <!-- Payment Method Selection -->
+        <form action="/payment/process" method="post">
+            <input type="hidden" name="bookingId" th:value="${booking.id}">
+
+            <p class="method-title">Select Payment Method</p>
+            <div class="method-grid">
+                <div class="method-option">
+                    <input type="radio" name="paymentMethod" id="cc" value="CREDIT_CARD" checked>
+                    <label class="method-label" for="cc">
+                        <span class="method-icon">💳</span>
+                        Credit Card
+                    </label>
+                </div>
+                <div class="method-option">
+                    <input type="radio" name="paymentMethod" id="dc" value="DEBIT_CARD">
+                    <label class="method-label" for="dc">
+                        <span class="method-icon">🏦</span>
+                        Debit Card
+                    </label>
+                </div>
+                <div class="method-option">
+                    <input type="radio" name="paymentMethod" id="upi" value="UPI">
+                    <label class="method-label" for="upi">
+                        <span class="method-icon">📱</span>
+                        UPI
+                    </label>
+                </div>
+                <div class="method-option">
+                    <input type="radio" name="paymentMethod" id="cash" value="CASH">
+                    <label class="method-label" for="cash">
+                        <span class="method-icon">💵</span>
+                        Cash
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-pay">🔒 Pay ₹<span th:text="${booking.totalAmount}"></span></button>
+        </form>
+
+        <p class="secure-note">🔒 This is a simulated payment — Booking ID: #<span th:text="${booking.id}"></span></p>
+    </div>
+</div>
+
+</body>
+</html>

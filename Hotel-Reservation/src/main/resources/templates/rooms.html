@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Browse Rooms - LuxeStay</title>
+<link
+	href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500&display=swap"
+	rel="stylesheet">
+<style>
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+:root {
+	--bg: #0a0a0f;
+	--card: #12121a;
+	--border: #1e1e2e;
+	--gold: #c9a84c;
+	--gold-light: #e8c97a;
+	--text: #e8e8f0;
+	--muted: #6b6b8a;
+	--green: #4caf50;
+	--red: #e57373;
+}
+
+body {
+	font-family: 'Inter', sans-serif;
+	background: var(--bg);
+	color: var(--text);
+	min-height: 100vh;
+}
+
+nav {
+	background: rgba(10, 10, 15, 0.95);
+	border-bottom: 1px solid var(--border);
+	padding: 1rem 3rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	position: sticky;
+	top: 0;
+	z-index: 99;
+	backdrop-filter: blur(10px);
+}
+
+.logo {
+	font-family: 'Playfair Display', serif;
+	font-size: 1.6rem;
+	color: var(--gold);
+	letter-spacing: 2px;
+}
+
+nav a {
+	color: var(--muted);
+	text-decoration: none;
+	margin-left: 2rem;
+	font-size: 0.9rem;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	transition: color 0.2s;
+}
+
+nav a:hover {
+	color: var(--gold);
+}
+
+.page-header {
+	padding: 4rem 3rem 2rem;
+	max-width: 1100px;
+	margin: 0 auto;
+}
+
+.page-header h1 {
+	font-family: 'Playfair Display', serif;
+	font-size: 2.5rem;
+	margin-bottom: 0.5rem;
+}
+
+.page-header p {
+	color: var(--muted);
+}
+
+/* Filter Bar */
+.filter-bar {
+	max-width: 1100px;
+	margin: 0 auto 3rem;
+	padding: 0 3rem;
+	display: flex;
+	gap: 1rem;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.filter-label {
+	color: var(--muted);
+	font-size: 0.85rem;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+}
+
+.filter-btn {
+	padding: 0.5rem 1.5rem;
+	border: 1px solid var(--border);
+	background: transparent;
+	color: var(--muted);
+	font-size: 0.85rem;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	text-decoration: none;
+	transition: all 0.2s;
+	cursor: pointer;
+}
+
+.filter-btn:hover, .filter-btn.active {
+	border-color: var(--gold);
+	color: var(--gold);
+}
+
+.filter-btn.active {
+	background: rgba(201, 168, 76, 0.1);
+}
+
+/* Room Grid */
+.rooms-grid {
+	max-width: 1100px;
+	margin: 0 auto;
+	padding: 0 3rem 5rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+	gap: 1.5rem;
+}
+
+.room-card {
+	background: var(--card);
+	border: 1px solid var(--border);
+	transition: border-color 0.3s, transform 0.2s;
+	overflow: hidden;
+}
+
+.room-card:hover {
+	border-color: var(--gold);
+	transform: translateY(-3px);
+}
+
+.room-card-header {
+	padding: 1.5rem 1.5rem 1rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	border-bottom: 1px solid var(--border);
+}
+
+.room-number {
+	color: var(--muted);
+	font-size: 0.8rem;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	margin-bottom: 0.3rem;
+}
+
+.room-type-badge {
+	padding: 0.25rem 0.75rem;
+	font-size: 0.7rem;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	border: 1px solid;
+}
+
+.badge-STANDARD {
+	border-color: #4caf50;
+	color: #4caf50;
+}
+
+.badge-DELUXE {
+	border-color: var(--gold);
+	color: var(--gold);
+}
+
+.badge-SUITE {
+	border-color: #9c7cdb;
+	color: #9c7cdb;
+}
+
+.room-card-body {
+	padding: 1.2rem 1.5rem;
+}
+
+.room-desc {
+	color: var(--muted);
+	font-size: 0.85rem;
+	line-height: 1.6;
+	margin-bottom: 1rem;
+}
+
+.room-meta {
+	display: flex;
+	gap: 1.5rem;
+	margin-bottom: 1.2rem;
+}
+
+.meta-item {
+	font-size: 0.8rem;
+	color: var(--muted);
+}
+
+.meta-item span {
+	color: var(--text);
+	display: block;
+	font-weight: 500;
+}
+
+.price-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-top: 1rem;
+	border-top: 1px solid var(--border);
+}
+
+.price {
+	color: var(--gold);
+	font-size: 1.2rem;
+	font-weight: 600;
+}
+
+.price small {
+	color: var(--muted);
+	font-size: 0.75rem;
+	font-weight: 400;
+}
+
+.btn-book {
+	background: var(--gold);
+	color: #0a0a0f;
+	border: none;
+	padding: 0.6rem 1.5rem;
+	font-size: 0.8rem;
+	font-weight: 600;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	text-decoration: none;
+	display: inline-block;
+	transition: background 0.2s;
+}
+
+.btn-book:hover {
+	background: var(--gold-light);
+}
+
+.empty-state {
+	text-align: center;
+	padding: 5rem 2rem;
+	color: var(--muted);
+	grid-column: 1/-1;
+}
+
+.empty-state h3 {
+	font-size: 1.5rem;
+	margin-bottom: 1rem;
+	color: var(--text);
+}
+</style>
+</head>
+<body>
+
+	<nav>
+		<div class="logo">✦ LuxeStay</div>
+		<div>
+			<a href="/">Home</a> <a href="/rooms">Rooms</a> <a href="/mybookings">My
+				Bookings</a>
+		</div>
+	</nav>
+
+	<div class="page-header">
+		<h1>Available Rooms</h1>
+		<p>Browse and select from our premium room categories</p>
+	</div>
+
+	<!-- Filter Bar -->
+	<div class="filter-bar">
+		<span class="filter-label">Filter:</span> <a href="/rooms"
+			class="filter-btn"
+			th:classappend="${selectedType == null ? ' active' : ''}">All
+			Rooms</a> <a href="/rooms?type=STANDARD" class="filter-btn"
+			th:classappend="${selectedType == 'STANDARD' ? ' active' : ''}">Standard</a>
+		<a href="/rooms?type=DELUXE" class="filter-btn"
+			th:classappend="${selectedType == 'DELUXE' ? ' active' : ''}">Deluxe</a>
+		<a href="/rooms?type=SUITE" class="filter-btn"
+			th:classappend="${selectedType == 'SUITE' ? ' active' : ''}">Suite</a>
+	</div>
+
+	<!-- Rooms Grid -->
+	<div class="rooms-grid">
+		<div th:if="${rooms.empty}" class="empty-state">
+			<h3>No Rooms Available</h3>
+			<p>All rooms in this category are currently booked. Please check
+				back soon.</p>
+		</div>
+
+		<div class="room-card" th:each="room : ${rooms}">
+			<div class="room-card-header">
+				<div>
+					<p class="room-number">
+						Room <span th:text="${room.roomNumber}"></span>
+					</p>
+				</div>
+				<span class="room-type-badge"
+					th:classappend="'badge-' + ${room.roomType}"
+					th:text="${room.roomType}"></span>
+			</div>
+			<div class="room-card-body">
+				<p class="room-desc" th:text="${room.description}"></p>
+				<div class="room-meta">
+					<div class="meta-item">
+						<span th:text="${room.maxGuests}"></span> Max Guests
+					</div>
+					<div class="meta-item">
+						<span th:text="${room.roomType}"></span> Category
+					</div>
+				</div>
+				<div class="price-row">
+					<div class="price">
+						₹<span th:text="${room.pricePerNight}"></span> <small>/night</small>
+					</div>
+					<a th:href="@{/mybookings/new/{id}(id=${room.id})}"
+						class="btn-book"> Book Now </a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

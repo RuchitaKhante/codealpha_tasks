@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>My Bookings | LuxeStay</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#0a0a0f;
+    --card:#12121a;
+    --border:#1f1f2d;
+    --gold:#c9a84c;
+    --gold-light:#e8c97a;
+    --text:#f5f5f5;
+    --muted:#8a8aa3;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+}
+
+/* Navbar */
+nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 60px;
+    background:rgba(10,10,15,0.95);
+    border-bottom:1px solid var(--border);
+}
+
+.logo{
+    font-family:'Playfair Display',serif;
+    font-size:28px;
+    color:var(--gold);
+    letter-spacing:2px;
+}
+
+.nav-btn{
+    text-decoration:none;
+    color:var(--gold);
+    border:1px solid var(--gold);
+    padding:10px 18px;
+    transition:0.3s;
+}
+
+.nav-btn:hover{
+    background:var(--gold);
+    color:#000;
+}
+
+/* Container */
+.container{
+    max-width:1200px;
+    margin:50px auto;
+    padding:0 20px;
+}
+
+/* Heading */
+.page-title{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.page-title h1{
+    font-family:'Playfair Display',serif;
+    font-size:42px;
+    margin-bottom:10px;
+}
+
+.page-title p{
+    color:var(--muted);
+}
+
+/* Card */
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+/* Table */
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+thead{
+    background:rgba(201,168,76,0.15);
+}
+
+thead th{
+    color:var(--gold);
+    padding:18px;
+    text-align:left;
+    font-size:14px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+}
+
+tbody tr{
+    border-bottom:1px solid var(--border);
+    transition:0.3s;
+}
+
+tbody tr:hover{
+    background:rgba(255,255,255,0.03);
+}
+
+tbody td{
+    padding:18px;
+    color:#ddd;
+}
+
+.booking-id{
+    color:var(--gold);
+    font-weight:600;
+}
+
+.room-badge{
+    display:inline-block;
+    padding:6px 12px;
+    border:1px solid var(--gold);
+    color:var(--gold);
+    font-size:12px;
+    border-radius:20px;
+}
+
+/* Empty State */
+.empty{
+    text-align:center;
+    padding:60px;
+    color:var(--muted);
+}
+
+.empty h3{
+    color:var(--gold);
+    margin-bottom:10px;
+}
+
+/* Footer Button */
+.back-section{
+    text-align:center;
+    margin-top:30px;
+}
+
+.back-btn{
+    display:inline-block;
+    padding:14px 28px;
+    background:var(--gold);
+    color:#000;
+    text-decoration:none;
+    font-weight:600;
+    letter-spacing:1px;
+    transition:0.3s;
+}
+
+.back-btn:hover{
+    background:var(--gold-light);
+}
+
+.delete-btn {
+    background: #e57373;
+    color: #0a0a0f;
+    border: none;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: 0.3s;
+    border-radius: 4px;
+}
+
+.delete-btn:hover {
+    background: #ff8a80;
+}
+
+</style>
+
+</head>
+<body>
+
+<nav>
+    <div class="logo">✦ LuxeStay</div>
+
+    <a href="/rooms" class="nav-btn">
+        Browse Rooms
+    </a>
+</nav>
+
+<div class="container">
+
+    <div class="page-title">
+        <h1>My Bookings</h1>
+        <p>Manage and review all your hotel reservations</p>
+    </div>
+
+    <div class="card">
+
+        <table th:if="${bookings != null and !#lists.isEmpty(bookings)}">
+
+            <thead>
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Guest Name</th>
+                    <th>Email</th>
+                    <th>Room</th>
+                    <th>Check-In</th>
+                    <th>Check-Out</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+    <tr th:each="booking : ${bookings}">
+
+        <td class="booking-id" th:text="${booking.id}"></td>
+
+        <td th:text="${booking.guestName}"></td>
+
+        <td th:text="${booking.guestEmail}"></td>
+
+        <td>
+            <span class="room-badge"
+                  th:text="${booking.room.roomNumber}">
+            </span>
+        </td>
+
+        <td th:text="${booking.checkInDate}"></td>
+
+        <td th:text="${booking.checkOutDate}"></td>
+
+        <!-- DELETE COLUMN -->
+        <td>
+            <form th:action="@{/mybookings/delete/{id}(id=${booking.id})}" 
+      method="post"
+      onsubmit="return confirm('Delete this booking?');">
+
+    <button type="submit" class="delete-btn">
+        Delete
+    </button>
+
+</form>
+        </td>
+
+    </tr>
+</tbody>
+
+        </table>
+
+        <div class="empty"
+             th:if="${bookings == null or #lists.isEmpty(bookings)}">
+
+            <h3>No Bookings Found</h3>
+            <p>You haven't made any reservations yet.</p>
+
+        </div>
+
+    </div>
+
+    <div class="back-section">
+        <a href="/rooms" class="back-btn">
+            Book a New Room
+        </a>
+    </div>
+
+</div>
+
+</body>
+</html>
+

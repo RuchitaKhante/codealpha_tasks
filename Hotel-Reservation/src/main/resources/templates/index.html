@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>LuxeStay Hotel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0a0f;
+            --card: #12121a;
+            --border: #1e1e2e;
+            --gold: #c9a84c;
+            --gold-light: #e8c97a;
+            --text: #e8e8f0;
+            --muted: #6b6b8a;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* NAV */
+        nav {
+            background: rgba(10,10,15,0.95);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky; top: 0; z-index: 99;
+            backdrop-filter: blur(10px);
+        }
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            color: var(--gold);
+            letter-spacing: 2px;
+        }
+        nav a {
+            color: var(--muted);
+            text-decoration: none;
+            margin-left: 2rem;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: color 0.2s;
+        }
+        nav a:hover { color: var(--gold); }
+
+        /* HERO */
+        .hero {
+            height: 88vh;
+            background: linear-gradient(160deg, #0a0a0f 0%, #12121a 40%, #0d0d18 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 60%, rgba(201,168,76,0.06) 0%, transparent 70%);
+        }
+        .hero-content { position: relative; z-index: 1; }
+        .hero-tag {
+            font-size: 0.75rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 1.5rem;
+        }
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 7vw, 5.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+        .hero h1 span { color: var(--gold); }
+        .hero p {
+            color: var(--muted);
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.7;
+        }
+        .btn-gold {
+            background: var(--gold);
+            color: #0a0a0f;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            display: inline-block;
+        }
+        .btn-gold:hover { background: var(--gold-light); transform: translateY(-2px); }
+        .btn-outline {
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            background: transparent;
+            padding: 1rem 2.5rem;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            display: inline-block;
+            margin-left: 1rem;
+            transition: all 0.2s;
+        }
+        .btn-outline:hover { background: var(--gold); color: #0a0a0f; }
+
+        /* FEATURES */
+        .features {
+            padding: 6rem 3rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .section-title {
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        .section-sub {
+            text-align: center;
+            color: var(--muted);
+            margin-bottom: 4rem;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        .feature-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+        .feature-card:hover { border-color: var(--gold); }
+        .feature-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .feature-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            margin-bottom: 0.75rem;
+            color: var(--gold);
+        }
+        .feature-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+        /* ROOM TYPES */
+        .room-types {
+            padding: 4rem 3rem 6rem;
+            background: var(--card);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .room-types-inner { max-width: 1100px; margin: 0 auto; }
+        .room-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .room-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 2.5rem 2rem;
+            transition: border-color 0.3s, transform 0.2s;
+            text-decoration: none;
+            color: var(--text);
+            display: block;
+        }
+        .room-card:hover { border-color: var(--gold); transform: translateY(-4px); }
+        .room-tag {
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 1rem;
+        }
+        .room-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .room-card .price {
+            color: var(--gold);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .room-card p { color: var(--muted); font-size: 0.85rem; line-height: 1.6; }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">✦ LuxeStay</div>
+    <div>
+        <a href="/">Home</a>
+        <a href="/rooms">Rooms</a>
+        <a href="/mybookings">My Bookings</a>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="hero-content">
+        <p class="hero-tag">✦ Premium Hotel Experience</p>
+        <h1>Where Luxury Meets<br><span>Comfort</span></h1>
+        <p>Discover our handpicked collection of rooms, from cozy Standard rooms to lavish Penthouse Suites.</p>
+        <a href="/rooms" class="btn-gold">Browse Rooms</a>
+        <a href="/mybookings" class="btn-outline">My Bookings</a>
+    </div>
+</section>
+
+<section class="features">
+    <h2 class="section-title">Why Choose LuxeStay</h2>
+    <p class="section-sub">PREMIUM AMENITIES · SEAMLESS BOOKING · INSTANT CONFIRMATION</p>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">🔍</div>
+            <h3>Easy Search</h3>
+            <p>Filter rooms by category — Standard, Deluxe, or Suite. Find your perfect match instantly.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Instant Booking</h3>
+            <p>Book in 3 easy steps. Enter your details, choose your dates, and confirm with a simulated payment.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>Secure Payments</h3>
+            <p>Multiple payment options including Credit Card, Debit Card, UPI, and Cash on arrival.</p>
+        </div>
+    </div>
+</section>
+
+<section class="room-types">
+    <div class="room-types-inner">
+        <h2 class="section-title">Our Room Categories</h2>
+        <p class="section-sub">TAILORED FOR EVERY TRAVELLER</p>
+        <div class="room-cards">
+            <a href="/rooms?type=STANDARD" class="room-card">
+                <p class="room-tag">Economy</p>
+                <h3>Standard Room</h3>
+                <p class="price">From ₹1,500/night</p>
+                <p>Comfortable and well-equipped rooms with all essential amenities. Perfect for solo or couple travellers.</p>
+            </a>
+            <a href="/rooms?type=DELUXE" class="room-card">
+                <p class="room-tag">Premium</p>
+                <h3>Deluxe Room</h3>
+                <p class="price">From ₹3,500/night</p>
+                <p>Spacious rooms with upgraded furnishings, mini-bar, balcony, and stunning views.</p>
+            </a>
+            <a href="/rooms?type=SUITE" class="room-card">
+                <p class="room-tag">Luxury</p>
+                <h3>Suite</h3>
+                <p class="price">From ₹7,000/night</p>
+                <p>Ultimate luxury experience with private terraces, butler service, and panoramic views.</p>
+            </a>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>© 2025 LuxeStay Hotel · CodeAlpha Task 4 · Built with Spring Boot + Thymeleaf</p>
+</footer>
+
+</body>
+</html>

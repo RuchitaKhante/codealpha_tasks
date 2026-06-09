@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Booking - LuxeStay</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #0a0a0f;
+    --card: #12121a;
+    --border: #1e1e2e;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --text: #e8e8f0;
+    --muted: #6b6b8a;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* NAV */
+nav {
+    background: rgba(10,10,15,0.95);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 3rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.logo {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold);
+    font-size: 1.5rem;
+}
+
+/* CONTAINER */
+.container {
+    max-width: 800px;
+    margin: 4rem auto;
+    padding: 0 2rem;
+}
+
+/* CARD */
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 3rem;
+}
+
+/* HEADER */
+.title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: var(--muted);
+    margin-bottom: 2rem;
+}
+
+/* ROOM INFO BOX */
+.room-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.room-box h3 {
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+}
+
+/* FORM */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+    display: block;
+}
+
+input {
+    width: 100%;
+    padding: 0.8rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    outline: none;
+}
+
+input:focus {
+    border-color: var(--gold);
+}
+
+/* FULL WIDTH */
+.full {
+    grid-column: 1 / -1;
+}
+
+/* BUTTON */
+button {
+    width: 100%;
+    margin-top: 2rem;
+    padding: 1rem;
+    background: var(--gold);
+    border: none;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: var(--gold-light);
+}
+
+/* SMALL */
+.small {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 1rem;
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+    <div class="logo">✦ LuxeStay</div>
+</nav>
+
+<div class="container">
+
+<div class="card">
+
+    <h2 class="title">Complete Your Booking</h2>
+    <p class="subtitle">Fill in your details to reserve your luxury stay</p>
+
+    <!-- ROOM DETAILS -->
+    <div class="room-box">
+        <h3 th:text="${room.roomType} + ' Room - ' + ${room.roomNumber}"></h3>
+        <p th:text="${room.description}"></p>
+        <p style="margin-top:10px; color:#c9a84c;">
+            ₹<span th:text="${room.pricePerNight}"></span> / night
+        </p>
+    </div>
+
+    <!-- FORM -->
+    <form th:action="@{/mybookings/confirm}" method="post">
+
+        <input type="hidden" name="roomId" th:value="${room.id}">
+
+        <div class="form-grid">
+
+            <div>
+                <label>Full Name</label>
+                <input type="text" name="guestName" required>
+            </div>
+
+            <div>
+                <label>Email</label>
+                <input type="email" name="guestEmail" required>
+            </div>
+
+            <div>
+                <label>Phone</label>
+                <input type="text" name="guestPhone" required>
+            </div>
+
+            <div>
+                <label>Guests</label>
+                <input type="number" name="numGuests" min="1" required>
+            </div>
+
+            <div>
+                <label>Check-in Date</label>
+                <input type="date" name="checkInDate" required>
+            </div>
+
+            <div>
+                <label>Check-out Date</label>
+                <input type="date" name="checkOutDate" required>
+            </div>
+
+        </div>
+
+        <button type="submit">Confirm Booking</button>
+
+        <p class="small">You will be redirected to secure payment after confirmation</p>
+
+    </form>
+
+</div>
+
+</div>
+
+</body>
+</html>
