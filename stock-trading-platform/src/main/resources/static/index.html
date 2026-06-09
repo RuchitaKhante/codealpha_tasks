@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StockTrade — Virtual Trading Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <span class="logo-icon">📈</span>
+      <h1>StockTrade</h1>
+      <p>Virtual Trading Platform</p>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+      <button class="tab-btn" onclick="switchTab('register')">Register</button>
+    </div>
+
+    <!-- Login Form -->
+    <div id="login-form">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="login-username" placeholder="Enter username" value="demo"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="Enter password" value="demo123"/>
+      </div>
+      <div id="auth-error" class="error-msg hidden"></div>
+      <button class="btn-primary full-width" onclick="login()">Login →</button>
+      <p class="hint">Demo: username <strong>demo</strong> / password <strong>demo123</strong></p>
+    </div>
+
+    <!-- Register Form -->
+    <div id="register-form" class="hidden">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="reg-username" placeholder="Choose a username"/>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="reg-email" placeholder="your@email.com"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="reg-password" placeholder="Choose a password"/>
+      </div>
+      <div id="reg-error" class="error-msg hidden"></div>
+      <button class="btn-primary full-width" onclick="register()">Create Account →</button>
+      <p class="hint">You'll start with <strong>$10,000</strong> virtual cash</p>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" class="hidden">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <span class="logo-text">📈 StockTrade</span>
+    </div>
+    <div class="header-center">
+      <nav class="nav-tabs">
+        <button class="nav-tab active" onclick="showPage('market')">Market</button>
+        <button class="nav-tab" onclick="showPage('portfolio')">Portfolio</button>
+        <button class="nav-tab" onclick="showPage('history')">History</button>
+      </nav>
+    </div>
+    <div class="header-right">
+      <span class="balance-chip">
+        💰 <span id="header-balance">$10,000.00</span>
+      </span>
+      <span class="user-chip" id="header-username">demo</span>
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <!-- MARKET PAGE -->
+  <div id="page-market" class="page active">
+    <div class="page-header">
+      <div>
+        <h2>Market Overview</h2>
+        <p class="sub">Live simulated prices — refreshes every 15s</p>
+      </div>
+      <div class="page-actions">
+        <select id="sector-filter" onchange="filterSector()" class="select-input">
+          <option value="">All Sectors</option>
+          <option>Technology</option>
+          <option>Finance</option>
+          <option>Healthcare</option>
+          <option>Energy</option>
+          <option>Consumer</option>
+        </select>
+        <button class="btn-outline" onclick="loadMarket()">⟳ Refresh</button>
+      </div>
+    </div>
+
+    <div id="market-grid" class="stock-grid">
+      <div class="loading">Loading market data...</div>
+    </div>
+
+    <div id="trade-panel" class="trade-panel hidden">
+      <div class="trade-panel-inner">
+        <div class="trade-header">
+          <div>
+            <h3 id="trade-symbol">AAPL</h3>
+            <p id="trade-company">Apple Inc.</p>
+          </div>
+          <div class="trade-price-block">
+            <span id="trade-price" class="trade-price">$178.50</span>
+            <span id="trade-change" class="badge-up">+1.2%</span>
+          </div>
+          <button class="close-btn" onclick="closeTradePanel()">✕</button>
+        </div>
+
+        <div class="trade-controls">
+          <div class="form-group">
+            <label>Quantity</label>
+            <input type="number" id="trade-qty" min="1" value="1" oninput="updateCost()"/>
+          </div>
+
+          <div class="cost-preview">
+            <span>Total Cost</span>
+            <strong id="trade-cost">$178.50</strong>
+          </div>
+
+          <div class="trade-btns">
+            <button class="btn-buy" onclick="executeTrade('buy')">BUY</button>
+            <button class="btn-sell" onclick="executeTrade('sell')">SELL</button>
+          </div>
+        </div>
+
+        <div id="trade-msg" class="trade-msg hidden"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PORTFOLIO PAGE -->
+  <div id="page-portfolio" class="page hidden">
+    <div class="page-header">
+      <div>
+        <h2>My Portfolio</h2>
+        <p class="sub">Your current holdings and performance</p>
+      </div>
+    </div>
+
+    <div id="summary-cards" class="summary-grid">
+      <div class="summary-card">
+        <p class="card-label">Net Worth</p>
+        <p class="card-value" id="net-worth">—</p>
+      </div>
+
+      <div class="summary-card">
+        <p class="card-label">Cash Balance</p>
+        <p class="card-value" id="cash-balance">—</p>
+      </div>
+
+      <div class="summary-card">
+        <p class="card-label">Invested</p>
+        <p class="card-value" id="total-invested">—</p>
+      </div>
+
+      <div class="summary-card">
+        <p class="card-label">Current Value</p>
+        <p class="card-value" id="current-value">—</p>
+      </div>
+
+      <div class="summary-card">
+        <p class="card-label">Total P&amp;L</p>
+        <p class="card-value" id="total-pnl">—</p>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Company</th>
+            <th>Qty</th>
+            <th>Avg Buy</th>
+            <th>Current</th>
+            <th>Total Cost</th>
+            <th>Market Value</th>
+            <th>P&amp;L</th>
+            <th>P&amp;L %</th>
+          </tr>
+        </thead>
+        <tbody id="holdings-tbody">
+          <tr>
+            <td colspan="9" class="loading">Loading portfolio...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- HISTORY PAGE -->
+  <div id="page-history" class="page hidden">
+    <div class="page-header">
+      <div>
+        <h2>Transaction History</h2>
+        <p class="sub">All your buy and sell trades</p>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Date &amp; Time</th>
+            <th>Type</th>
+            <th>Symbol</th>
+            <th>Company</th>
+            <th>Qty</th>
+            <th>Price/Share</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="history-tbody">
+          <tr>
+            <td colspan="7" class="loading">Loading history...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
